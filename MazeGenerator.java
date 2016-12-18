@@ -87,12 +87,15 @@ public class MazeGenerator {
 		StdDraw.setScale(0, n);
    		StdDraw.enableDoubleBuffering();
 
-		Stack<Point> pathstack = new Stack<>();
+		Stack<Point> pathstack1 = new Stack<>();
+		Point starter1 = new Point(n/2, n/2);
+		Point current1 = starter1;
+		pathstack1.push(current1);
 
-		Point starter = new Point(n/2, n/2);
-
-		Point current = starter;
-		pathstack.push(current);
+		Stack<Point> pathstack2 = new Stack<>();
+		Point starter2 = new Point(n/2, n/2);
+		Point current2 = starter2;
+		pathstack2.push(current2);
 
 		int[][] board = initGrid(n, n);
 
@@ -103,65 +106,126 @@ public class MazeGenerator {
 		// 	System.out.println("");
 		// }
 
-		Point furthest = current;
+		Point furthest = current1;
 		int longestPath = 0;
 
-		while (!pathstack.isEmpty()) {
+		while (!pathstack1.isEmpty() || !pathstack2.isEmpty()) {
 
-			ArrayList<Direction> moves = getPossibleMoves(board, current);
+			if (!pathstack1.isEmpty()) {
+				ArrayList<Direction> moves = getPossibleMoves(board, current1);
 
-			if (moves.isEmpty()) {
-				// int dist = pathstack.size();
-				current = pathstack.pop();
+				if (moves.isEmpty()) {
+					// int dist = pathstack.size();
+					current1 = pathstack1.pop();
 
-				// if (dist > longestPath) {
-					// longestPath = dist;
-					// furthest = current;
-				// }
-				continue;
+					// if (dist > longestPath) {
+						// longestPath = dist;
+						// furthest = current;
+					// }
+					continue;
+				}
+
+
+				Direction choice = moves.get((int) (Math.random() * moves.size()));
+
+				// System.out.println(choice);
+
+				switch (choice) {
+
+					case UP:
+						board[current1.x][current1.y] ^= TOPWALL;
+						current1 = new Point(current1.x, (current1.y - 1));
+						board[current1.x][current1.y] ^= BOTTOMWALL;
+						break;
+
+					case DOWN:
+						board[current1.x][current1.y] ^= BOTTOMWALL;
+						current1 = new Point(current1.x, (current1.y + 1));
+						board[current1.x][current1.y] ^= TOPWALL;
+						break;
+
+					case LEFT:
+						board[current1.x][current1.y] ^= LEFTWALL;
+						current1 = new Point(current1.x - 1, current1.y);
+						board[current1.x][current1.y] ^= RIGHTWALL;
+						break;
+
+					case RIGHT:
+						board[current1.x][current1.y] ^= RIGHTWALL;
+						current1 = new Point(current1.x + 1, current1.y);
+						board[current1.x][current1.y] ^= LEFTWALL;
+						break;
+				}
+				
+				pathstack1.push(current1);
+
+				int dist = pathstack1.size();
+				if (dist > longestPath) {
+					longestPath = dist;
+					furthest = current1;
+				}
+
+				displayBoard(board, furthest, starter1);
 			}
 
 
-			Direction choice = moves.get((int) (Math.random() * moves.size()));
+			//NUMBER 2 ###################################################################
+			if (!pathstack2.isEmpty()) {
+				ArrayList<Direction> moves = getPossibleMoves(board, current2);
 
-			// System.out.println(choice);
+				if (moves.isEmpty()) {
+					// int dist = pathstack.size();
+					current2 = pathstack2.pop();
 
-			switch (choice) {
+					// if (dist > longestPath) {
+						// longestPath = dist;
+						// furthest = current;
+					// }
+					continue;
+				}
 
-				case UP:
-					board[current.x][current.y] ^= TOPWALL;
-					current = new Point(current.x, (current.y - 1));
-					board[current.x][current.y] ^= BOTTOMWALL;
-					break;
 
-				case DOWN:
-					board[current.x][current.y] ^= BOTTOMWALL;
-					current = new Point(current.x, (current.y + 1));
-					board[current.x][current.y] ^= TOPWALL;
-					break;
+				Direction choice = moves.get((int) (Math.random() * moves.size()));
 
-				case LEFT:
-					board[current.x][current.y] ^= LEFTWALL;
-					current = new Point(current.x - 1, current.y);
-					board[current.x][current.y] ^= RIGHTWALL;
-					break;
+				// System.out.println(choice);
 
-				case RIGHT:
-					board[current.x][current.y] ^= RIGHTWALL;
-					current = new Point(current.x + 1, current.y);
-					board[current.x][current.y] ^= LEFTWALL;
-					break;
+				switch (choice) {
+
+					case UP:
+						board[current2.x][current2.y] ^= TOPWALL;
+						current2 = new Point(current2.x, (current2.y - 1));
+						board[current2.x][current2.y] ^= BOTTOMWALL;
+						break;
+
+					case DOWN:
+						board[current2.x][current2.y] ^= BOTTOMWALL;
+						current2 = new Point(current2.x, (current2.y + 1));
+						board[current2.x][current2.y] ^= TOPWALL;
+						break;
+
+					case LEFT:
+						board[current2.x][current2.y] ^= LEFTWALL;
+						current2 = new Point(current2.x - 1, current2.y);
+						board[current2.x][current2.y] ^= RIGHTWALL;
+						break;
+
+					case RIGHT:
+						board[current2.x][current2.y] ^= RIGHTWALL;
+						current2 = new Point(current2.x + 1, current2.y);
+						board[current2.x][current2.y] ^= LEFTWALL;
+						break;
+				}
+				
+				pathstack2.push(current2);
+
+				int dist = pathstack2.size();
+				if (dist > longestPath) {
+					longestPath = dist;
+					furthest = current2;
+				}
+
+				displayBoard(board, furthest, starter2);
 			}
-			
-			pathstack.push(current);
-
-			int dist = pathstack.size();
-			if (dist > longestPath) {
-				longestPath = dist;
-				furthest = current;
-			}
-
-			displayBoard(board, furthest, starter);
 
 
 		}
@@ -173,7 +237,7 @@ public class MazeGenerator {
 		// 	System.out.println("");
 		// }
 
-		displayBoard(board, furthest, starter);
+		displayBoard(board, furthest, starter1);
 	}
 }
 

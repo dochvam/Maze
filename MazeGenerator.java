@@ -108,8 +108,11 @@ public class MazeGenerator {
 
 		Point furthest = current1;
 		int longestPath = 0;
+		boolean drawNow = true;
 
 		while (!pathstack1.isEmpty() || !pathstack2.isEmpty()) {
+
+			drawNow = !drawNow;
 
 			if (!pathstack1.isEmpty()) {
 				ArrayList<Direction> moves = getPossibleMoves(board, current1);
@@ -165,7 +168,7 @@ public class MazeGenerator {
 					furthest = current1;
 				}
 
-				displayBoard(board, furthest, starter1);
+				// displayBoard(board, furthest, starter1);
 			}
 
 
@@ -224,7 +227,7 @@ public class MazeGenerator {
 					furthest = current2;
 				}
 
-				displayBoard(board, furthest, starter2);
+				// if (drawNow) displayBoard(board, furthest, starter2);
 			}
 
 
@@ -236,6 +239,8 @@ public class MazeGenerator {
 		// 	}
 		// 	System.out.println("");
 		// }
+
+
 
 		displayBoard(board, furthest, starter1);
 	}

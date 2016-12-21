@@ -1,20 +1,37 @@
+/**
+ * Random maze generator using depth-first search algorithm.
+ *
+ * @author <a href="mailto:bg5087a@american.edu">Ben Goldstein</a>
+ * @version 1.1
+ */
+
 import java.util.*;
 
 public class MazeGenerator {
 
+	 /**
+     * Enum class of directions.
+     */
 	public enum Direction {
 		UP, DOWN, LEFT, RIGHT
 	};
 
 	// _TOP_ _RIGHT_ _BOTTOM_ _LEFT_ 
 
+	//binary encoding of walls in the grid representation of the maze
 	public static final int UNVISITED = 0xF;
 	public static final int TOPWALL = 1 << 3;
 	public static final int RIGHTWALL = 1 << 2;
 	public static final int BOTTOMWALL = 1 << 1;
 	public static final int LEFTWALL = 1;
 
-
+     /**
+     * Grid initializer.
+     *
+     * @param n is vertical dimension
+     * @param m is the horizontal dimension
+     * @return a fully-walled grid
+     */
 	public static int[][] initGrid(int n, int m) {
 
 		int[][] board = new int[n][m];
@@ -26,6 +43,13 @@ public class MazeGenerator {
 		return board;
 	}
 
+     /**
+     * Returns valid moves for the searcher based on its location
+     *
+     * @param board is the maze so far
+     * @param current is the Point the searcher is currently at
+     * @return an ArrayList of the possible moves (type Direction)
+     */
 	public static ArrayList<Direction> getPossibleMoves(int[][] board, Point current) {
 
 		ArrayList<Direction> validMoves = new ArrayList<>();
@@ -42,14 +66,21 @@ public class MazeGenerator {
 		return validMoves;
 	}
 
-	public static void displayBoard(int[][] board, Point p1, Point p2){
+     /**
+     * Displays the maze so far.
+     *
+     * @param board is the grid so far
+     * @param starter is the point of origin
+     * @param end is the point that's farthest from the origin
+     */
+	public static void displayBoard(int[][] board, Point starter, Point end){
 
 		StdDraw.clear();
 
 		StdDraw.setPenColor(StdDraw.MAGENTA);
-		StdDraw.filledRectangle(p1.x + 0.5, p1.y + 0.5, 0.5, 0.5);
+		StdDraw.filledRectangle(starter.x + 0.5, starter.y + 0.5, 0.5, 0.5);
 		StdDraw.setPenColor(StdDraw.GREEN);
-		StdDraw.filledRectangle(p2.x + 0.5, p2.y + 0.5, 0.5, 0.5);
+		StdDraw.filledRectangle(end.x + 0.5, end.y + 0.5, 0.5, 0.5);
 
 		double pr1 = 0.01 * (20 / board.length);
 		StdDraw.setPenRadius(pr1);
@@ -79,9 +110,13 @@ public class MazeGenerator {
 	public static void main(String[] args) {
 
 		int n = 10;
+		boolean instant = false;
 
 		if (args.length != 0) 
 			n = Integer.parseInt(args[0]);
+
+		if (args.length > 1)
+			if (args[1].equals("now")) instant = true;
 		
 		StdDraw.setCanvasSize(800, 800);
 		StdDraw.setScale(0, n);
@@ -161,7 +196,7 @@ public class MazeGenerator {
 				furthest = current;
 			}
 
-			displayBoard(board, furthest, starter);
+			if (!instant) displayBoard(board, furthest, starter);
 
 
 		}
